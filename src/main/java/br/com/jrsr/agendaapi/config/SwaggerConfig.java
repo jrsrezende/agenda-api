@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI taskSchedulingOpenAPI() {
+    public OpenAPI agendaOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Task Scheduling API")
+                        .title("Agenda API")
                         .version("1.0.0")
                         .description("API for managing tasks")
                         .contact(new Contact()
