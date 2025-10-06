@@ -9,13 +9,10 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, UUID> {
-
-    Optional<Task> findById(UUID id);
 
     List<Task> findByDateBetween(LocalDate minDate, LocalDate maxDate);
 

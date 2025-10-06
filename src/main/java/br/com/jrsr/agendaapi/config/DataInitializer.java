@@ -14,15 +14,7 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initCategories(CategoryRepository repository) {
         return args -> {
-            List<String> categoryNames = List.of(
-                    "Work",
-                    "Leisure",
-                    "Study",
-                    "Health",
-                    "Home",
-                    "Family",
-                    "Others"
-            );
+            List<String> categoryNames = List.of("Work", "Leisure", "Study", "Health", "Home", "Family", "Others");
 
             categoryNames.stream()
                     .filter(name -> repository.findByName(name).isEmpty()) // só insere se não existir

@@ -19,7 +19,7 @@ public class CategoryTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("Get tasks within a date range")
+    @DisplayName("Get all categories")
     public void getTasks(){
         try {
 
