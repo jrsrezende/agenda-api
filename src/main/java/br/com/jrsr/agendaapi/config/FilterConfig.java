@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FilterConfig {
 
-    @Value("${jwt_key}")
-    private String chaveJwt;
+    @Value("${jwt.key}")
+    private String jwtKey;
 
     @Bean
     FilterRegistrationBean<JwtAuthFilter> jwtAuthFilter() {
         FilterRegistrationBean<JwtAuthFilter> registration = new FilterRegistrationBean<>();
 
-        registration.setFilter(new JwtAuthFilter(chaveJwt));
+        registration.setFilter(new JwtAuthFilter(jwtKey));
         registration.addUrlPatterns("/api/*");
 
         return registration;

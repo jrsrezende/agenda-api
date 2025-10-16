@@ -29,24 +29,24 @@ public class JwtAuthFilter extends GenericFilterBean {
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) { //O navegador primeiro envia uma requisição OPTIONS “preflight” para verificar se a API permite essa operação.
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request, response);
             return;
         }
 
         final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) { //verifica se o header existe e se começa com Bearer
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access.");
             return;
         }
 
         final String token = authHeader.substring(7);
         try {
-            Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-            request.setAttribute("claims", claims);
-            filterChain.doFilter(request, response);
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes()); //cria a chave de assinatura
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody(); //valida o token e extrai os claims
+            request.setAttribute("claims", claims); //coloca os claims na request para ser usado depois
+            filterChain.doFilter(request, response); // continua a execução da requisição
         } catch (ExpiredJwtException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Expired Token");
         } catch (JwtException | IllegalArgumentException e) {

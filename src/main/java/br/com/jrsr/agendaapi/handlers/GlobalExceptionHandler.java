@@ -1,6 +1,7 @@
 package br.com.jrsr.agendaapi.handlers;
 
 
+import br.com.jrsr.agendaapi.exceptions.TaskNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,17 +15,15 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGlobalException(Exception e) {
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<Object> handleTaskNotFoundException(TaskNotFoundException e) {
 
         Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         body.put("timestamp", LocalDateTime.now());
-        body.put("error", "Internal server error");
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", e.getMessage());
 
-        e.printStackTrace();
-
-        return ResponseEntity.status(500).body(body);
+        return ResponseEntity.status(404).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,8 +32,8 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getFieldErrors().forEach(error -> fieldErrors.put(error.getField(), error.getDefaultMessage()));
 
         Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("errors", fieldErrors);
 
         return ResponseEntity.status(400).body(body);
