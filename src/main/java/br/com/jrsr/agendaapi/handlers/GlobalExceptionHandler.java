@@ -15,13 +15,27 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGlobalException(Exception e) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("message", e.getMessage());
+        body.put("error", "Internal server error");
+
+        e.printStackTrace();
+
+        return ResponseEntity.status(500).body(body);
+    }
+
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<Object> handleTaskNotFoundException(TaskNotFoundException e) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", e.getMessage());
+        body.put("message", e.getMessage());
 
         return ResponseEntity.status(404).body(body);
     }
@@ -34,6 +48,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("message", "Field validation error");
         body.put("errors", fieldErrors);
 
         return ResponseEntity.status(400).body(body);
