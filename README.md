@@ -26,7 +26,7 @@ The project was created with the goal of providing a simple and well-structured 
 
 ## How to Run
 1. Clone the repository: https://github.com/jrsrezende/agenda-api
-2. Run the cointainer:
+2. Run the container:
 ```bash
 javac -d out/production/chess-system -cp src src/application/Program.java
 ```
