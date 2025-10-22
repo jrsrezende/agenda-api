@@ -7,7 +7,7 @@ The project was created with the goal of providing a simple and well-structured 
 ## Features
 - CRUD for Tasks
 - CRUD for Categories
--  Authentication and authorization with JWT
+- Authentication and authorization with JWT
 - Documentation with Swagger/OpenAPI
 - CORS configuration
 - Global exception handling
@@ -16,10 +16,9 @@ The project was created with the goal of providing a simple and well-structured 
 
 ## Tecnologies
 - Java 17
-- Spring Boot 3
-  - Spring Web
-  - Spring Data JPA
-  - Spring Validation
+- Spring Web
+- Spring Data JPA
+- Spring Validation
 - Swagger / SpringDoc OpenAPI
 - JWT (JSON Web Token)
 - Maven
