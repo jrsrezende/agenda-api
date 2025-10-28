@@ -1,8 +1,8 @@
 package br.com.jrsr.agendaapi.repositories;
 
 import br.com.jrsr.agendaapi.domain.entities.Task;
-import br.com.jrsr.agendaapi.dto.TaskCategoryResponse;
-import br.com.jrsr.agendaapi.dto.TaskPriorityResponse;
+import br.com.jrsr.agendaapi.dto.response.TasksGroupedByCategoryResponse;
+import br.com.jrsr.agendaapi.dto.response.TasksGroupedByPriorityResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,11 +16,11 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     List<Task> findByDateBetween(LocalDate minDate, LocalDate maxDate);
 
-    @Query("SELECT new br.com.jrsr.agendaapi.dto.TaskPriorityResponse(t.priority, COUNT(t)) FROM Task t " +
+    @Query("SELECT new br.com.jrsr.agendaapi.dto.response.TasksGroupedByPriorityResponse(t.priority, COUNT(t)) FROM Task t " +
             "GROUP BY t.priority")
-    List<TaskPriorityResponse> findTasksGroupedByPriority();
+    List<TasksGroupedByPriorityResponse> findTasksGroupedByPriority();
 
-    @Query("SELECT new br.com.jrsr.agendaapi.dto.TaskCategoryResponse(t.category.name, Count(t)) FROM Task t " +
+    @Query("SELECT new br.com.jrsr.agendaapi.dto.response.TasksGroupedByCategoryResponse(t.category.name, Count(t)) FROM Task t " +
             "GROUP BY t.category.name")
-    List<TaskCategoryResponse> findTasksGroupedByCategory();
+    List<TasksGroupedByCategoryResponse> findTasksGroupedByCategory();
 }

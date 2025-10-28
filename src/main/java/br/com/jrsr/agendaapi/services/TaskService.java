@@ -3,11 +3,13 @@ package br.com.jrsr.agendaapi.services;
 import br.com.jrsr.agendaapi.domain.entities.Category;
 import br.com.jrsr.agendaapi.domain.entities.Task;
 import br.com.jrsr.agendaapi.domain.enums.Priority;
-import br.com.jrsr.agendaapi.dto.TaskCategoryResponse;
-import br.com.jrsr.agendaapi.dto.TaskPostRequest;
-import br.com.jrsr.agendaapi.dto.TaskPriorityResponse;
-import br.com.jrsr.agendaapi.dto.TaskPutRequest;
+import br.com.jrsr.agendaapi.dto.response.TaskResponse;
+import br.com.jrsr.agendaapi.dto.response.TasksGroupedByCategoryResponse;
+import br.com.jrsr.agendaapi.dto.request.CreateTaskRequest;
+import br.com.jrsr.agendaapi.dto.response.TasksGroupedByPriorityResponse;
+import br.com.jrsr.agendaapi.dto.request.UpdateTaskRequest;
 import br.com.jrsr.agendaapi.exceptions.TaskNotFoundException;
+import br.com.jrsr.agendaapi.repositories.CategoryRepository;
 import br.com.jrsr.agendaapi.repositories.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,48 +20,73 @@ import java.util.UUID;
 @Service
 public class TaskService {
 
-    private final TaskRepository repository;
+    private final TaskRepository taskRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TaskService(TaskRepository repository) {
-        this.repository = repository;
+    public TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository) {
+        this.taskRepository = taskRepository;
+        this.categoryRepository = categoryRepository;
     }
 
-    public void createTask(TaskPostRequest request) {
+    public TaskResponse createTask(CreateTaskRequest request) {
+        Category categoryReference = categoryRepository.getReferenceById(request.getCategoryId());
+
         Task task = new Task();
         task.setName(request.getName());
-        task.setDate(LocalDate.parse(request.getDate()));
-        task.setPriority(Priority.valueOf(request.getPriority()));
-        task.setCategory(new Category());
-        task.getCategory().setId(UUID.fromString(request.getCategoryId()));
+        task.setDate(request.getDate());
+        task.setPriority(request.getPriority());
+        task.setCategory(categoryReference);
         task.setFinished(false);
-        repository.save(task);
+
+        taskRepository.save(task);
+
+        TaskResponse response = new TaskResponse();
+        response.setId(task.getId());
+        response.setName(task.getName());
+        response.setDate(task.getDate());
+        response.setPriority(task.getPriority());
+        response.setFinished(task.getFinished());
+        response.setCategoryId(task.getCategory().getId());
+        return response;
     }
 
-    public void updateTask(TaskPutRequest request, UUID taskId) {
-        Task task = repository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found. Check the provided ID."));
+    public TaskResponse updateTask(UpdateTaskRequest request, UUID taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found. Check the provided ID."));
+
+        Category categoryReference = categoryRepository.getReferenceById(request.getCategoryId());
+
         task.setName(request.getName());
-        task.setDate(LocalDate.parse(request.getDate()));
-        task.setPriority(Priority.valueOf(request.getPriority()));
+        task.setDate(request.getDate());
+        task.setPriority(request.getPriority());
         task.setFinished(request.getFinished());
-        task.setCategory(new Category());
-        task.getCategory().setId(UUID.fromString(request.getCategoryId()));
-        repository.save(task);
+        task.setCategory(categoryReference);
+
+        taskRepository.save(task);
+
+        TaskResponse response = new TaskResponse();
+        response.setId(task.getId());
+        response.setName(task.getName());
+        response.setDate(task.getDate());
+        response.setPriority(task.getPriority());
+        response.setFinished(task.getFinished());
+        response.setCategoryId(task.getCategory().getId());
+        return response;
     }
 
     public void deleteTask(UUID taskId) {
-        Task task = repository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found. Check the provided ID."));
-        repository.delete(task);
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found. Check the provided ID."));
+        taskRepository.delete(task);
     }
 
     public List<Task> getTasks(LocalDate minDate, LocalDate maxDate) {
-        return repository.findByDateBetween(minDate, maxDate);
+        return taskRepository.findByDateBetween(minDate, maxDate);
     }
 
-    public List<TaskPriorityResponse> getTasksByPriority() {
-        return repository.findTasksGroupedByPriority();
+    public List<TasksGroupedByPriorityResponse> getTasksByPriority() {
+        return taskRepository.findTasksGroupedByPriority();
     }
 
-    public List<TaskCategoryResponse> getTasksByCategory() {
-        return repository.findTasksGroupedByCategory();
+    public List<TasksGroupedByCategoryResponse> getTasksByCategory() {
+        return taskRepository.findTasksGroupedByCategory();
     }
 }

@@ -1,9 +1,10 @@
 package br.com.jrsr.agendaapi.controllers;
 
-import br.com.jrsr.agendaapi.dto.TaskCategoryResponse;
-import br.com.jrsr.agendaapi.dto.TaskPostRequest;
-import br.com.jrsr.agendaapi.dto.TaskPriorityResponse;
-import br.com.jrsr.agendaapi.dto.TaskPutRequest;
+import br.com.jrsr.agendaapi.dto.response.TaskResponse;
+import br.com.jrsr.agendaapi.dto.response.TasksGroupedByCategoryResponse;
+import br.com.jrsr.agendaapi.dto.request.CreateTaskRequest;
+import br.com.jrsr.agendaapi.dto.response.TasksGroupedByPriorityResponse;
+import br.com.jrsr.agendaapi.dto.request.UpdateTaskRequest;
 import br.com.jrsr.agendaapi.domain.entities.Task;
 import br.com.jrsr.agendaapi.services.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,9 +33,9 @@ public class TaskController {
     @ApiResponse(responseCode = "201", description = "Task created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid request data")
     @PostMapping
-    public ResponseEntity<String> createTask(@RequestBody @Valid TaskPostRequest request) {
-        service.createTask(request);
-        return ResponseEntity.status(201).body("Task created successfully");
+    public ResponseEntity<TaskResponse> createTask(@RequestBody @Valid CreateTaskRequest request) {
+        TaskResponse response = service.createTask(request);
+        return ResponseEntity.status(201).body(response);
     }
 
     @Operation(summary = "Update an existing task", description = "Updates the task details using its ID")
@@ -42,9 +43,9 @@ public class TaskController {
     @ApiResponse(responseCode = "404", description = "Task not found. Check the provided ID")
     @ApiResponse(responseCode = "400", description = "Invalid request data")
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateTask(@RequestBody @Valid TaskPutRequest request, @PathVariable UUID id) {
-        service.updateTask(request, id);
-        return ResponseEntity.status(200).body("Task updated successfully");
+    public ResponseEntity<TaskResponse> updateTask(@RequestBody @Valid UpdateTaskRequest request, @PathVariable UUID id) {
+        TaskResponse response = service.updateTask(request, id);
+        return ResponseEntity.status(200).body(response);
     }
 
     @Operation(summary = "Delete a task", description = "Deletes a task by its ID")
@@ -67,16 +68,16 @@ public class TaskController {
     @Operation(summary = "Get tasks grouped by priority", description = "Returns task counts grouped by priority")
     @ApiResponse(responseCode = "200", description = "Task priorities returned successfully")
     @GetMapping("/groupby-priority")
-    public ResponseEntity<List<TaskPriorityResponse>> getTasksByPriority() {
-        List<TaskPriorityResponse> tasks = service.getTasksByPriority();
+    public ResponseEntity<List<TasksGroupedByPriorityResponse>> getTasksByPriority() {
+        List<TasksGroupedByPriorityResponse> tasks = service.getTasksByPriority();
         return ResponseEntity.status(200).body(tasks);
     }
 
     @Operation(summary = "Get tasks grouped by category", description = "Returns task counts grouped by category")
     @ApiResponse(responseCode = "200", description = "Task categories returned successfully")
     @GetMapping("/groupby-category")
-    public ResponseEntity<List<TaskCategoryResponse>> getTasksByCategory() {
-        List<TaskCategoryResponse> tasks = service.getTasksByCategory();
+    public ResponseEntity<List<TasksGroupedByCategoryResponse>> getTasksByCategory() {
+        List<TasksGroupedByCategoryResponse> tasks = service.getTasksByCategory();
         return ResponseEntity.status(200).body(tasks);
     }
 }
