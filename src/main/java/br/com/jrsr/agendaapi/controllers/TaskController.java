@@ -60,8 +60,8 @@ public class TaskController {
     @Operation(summary = "Get tasks within a date range", description = "Retrieves all tasks between minDate and maxDate")
     @ApiResponse(responseCode = "200", description = "List of tasks returned successfully")
     @GetMapping("/{minDate}/{maxDate}")
-    public ResponseEntity<List<Task>> getTasks(@PathVariable LocalDate minDate, @PathVariable LocalDate maxDate) {
-        List<Task> tasks = service.getTasks(minDate, maxDate);
+    public ResponseEntity<List<TaskResponse>> getTasks(@PathVariable LocalDate minDate, @PathVariable LocalDate maxDate) {
+        List<TaskResponse> tasks = service.getTasks(minDate, maxDate);
         return ResponseEntity.status(200).body(tasks);
     }
 

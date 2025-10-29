@@ -2,7 +2,6 @@ package br.com.jrsr.agendaapi.services;
 
 import br.com.jrsr.agendaapi.domain.entities.Category;
 import br.com.jrsr.agendaapi.domain.entities.Task;
-import br.com.jrsr.agendaapi.domain.enums.Priority;
 import br.com.jrsr.agendaapi.dto.response.TaskResponse;
 import br.com.jrsr.agendaapi.dto.response.TasksGroupedByCategoryResponse;
 import br.com.jrsr.agendaapi.dto.request.CreateTaskRequest;
@@ -40,14 +39,7 @@ public class TaskService {
 
         taskRepository.save(task);
 
-        TaskResponse response = new TaskResponse();
-        response.setId(task.getId());
-        response.setName(task.getName());
-        response.setDate(task.getDate());
-        response.setPriority(task.getPriority());
-        response.setFinished(task.getFinished());
-        response.setCategoryId(task.getCategory().getId());
-        return response;
+        return getTaskResponse(task);
     }
 
     public TaskResponse updateTask(UpdateTaskRequest request, UUID taskId) {
@@ -63,6 +55,21 @@ public class TaskService {
 
         taskRepository.save(task);
 
+        return getTaskResponse(task);
+    }
+
+    public void deleteTask(UUID taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found. Check the provided ID."));
+        taskRepository.delete(task);
+    }
+
+    public List<TaskResponse> getTasks(LocalDate minDate, LocalDate maxDate) {
+        List<Task> list = taskRepository.findByDateBetweenOrderByDateAsc(minDate, maxDate);
+
+        return list.stream().map(this::getTaskResponse).toList();
+    }
+
+    private TaskResponse getTaskResponse(Task task) {
         TaskResponse response = new TaskResponse();
         response.setId(task.getId());
         response.setName(task.getName());
@@ -71,15 +78,6 @@ public class TaskService {
         response.setFinished(task.getFinished());
         response.setCategoryId(task.getCategory().getId());
         return response;
-    }
-
-    public void deleteTask(UUID taskId) {
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found. Check the provided ID."));
-        taskRepository.delete(task);
-    }
-
-    public List<Task> getTasks(LocalDate minDate, LocalDate maxDate) {
-        return taskRepository.findByDateBetween(minDate, maxDate);
     }
 
     public List<TasksGroupedByPriorityResponse> getTasksByPriority() {

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, UUID> {
 
-    List<Task> findByDateBetween(LocalDate minDate, LocalDate maxDate);
+    List<Task> findByDateBetweenOrderByDateAsc(LocalDate dateAfter, LocalDate dateBefore);
 
     @Query("SELECT new br.com.jrsr.agendaapi.dto.response.TasksGroupedByPriorityResponse(t.priority, COUNT(t)) FROM Task t " +
             "GROUP BY t.priority")
