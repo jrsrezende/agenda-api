@@ -77,6 +77,7 @@ public class TaskService {
         response.setPriority(task.getPriority());
         response.setFinished(task.getFinished());
         response.setCategoryId(task.getCategory().getId());
+        response.setCategoryName(task.getCategory().getName());
         return response;
     }
 

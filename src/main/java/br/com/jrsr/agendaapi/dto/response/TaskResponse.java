@@ -22,4 +22,6 @@ public class TaskResponse {
     private Boolean finished;
 
     private UUID categoryId;
+
+    private String categoryName;
 }
